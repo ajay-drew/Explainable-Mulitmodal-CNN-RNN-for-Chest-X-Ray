@@ -1,0 +1,102 @@
+# Project rules and session log
+
+## Standing rule
+After each prompt, add to .cursorrules: (1) the user's request, (2) how it was executed, (3) what changes were made.
+
+---
+
+## Session log
+
+### 2025-01-30 — Project plan reference document
+
+**User request:** Create a markdown file containing the full project overview and plan for the explainable multimodal CNN-RNN chest X-ray diagnosis system, so it can be referred to every time we work on the project.
+
+**Execution:**
+- Created `PROJECT_PLAN.md` in the repo root with the complete plan.
+- Structured sections: Project Overview, Requirements (Functional / Non-Functional), Detailed Component Descriptions, Benchmarks/Targets, References.
+
+**Changes made:**
+- **Added:** `PROJECT_PLAN.md` — Single source of truth for:
+  - Goals (MIMIC-CXR, fusion, XAI, >92% accuracy, regulatory alignment)
+  - Data ingestion & preprocessing (image 224×224, text tokenization, 80/10/10 splits)
+  - Feature extraction (CNN: ResNet50/152, RNN: LSTM/GRU + BioBERT/GloVe)
+  - Multimodal fusion (attention/Transformer, MCX-Net-inspired)
+  - Multi-label classification (BCE, sigmoid, threshold 0.5)
+  - XAI (Grad-CAM, SHAP/LIME, unified faithfulness >92%)
+  - Evaluation (AUROC >0.816, baselines), NFRs (performance, scalability, compliance)
+  - Component-level specs (input layer, preprocessing, branches, fusion, classification, XAI, evaluation)
+- **Added:** `.cursorrules` with this standing rule and session log.
+
+**Reference for future work:** Always consult `PROJECT_PLAN.md` when implementing features, choosing architectures, or validating against requirements.
+
+### 2025-01-30 — Transfer learning model search (MIMIC-CXR)
+
+**User request:** Search the web for which transfer learning model would work for the project, preferably one trained on MIMIC-CXR.
+
+**Execution:**
+- Web search for MIMIC-CXR pretrained models, TorchXRayVision, and CXR transfer learning best practices.
+- Fetched TorchXRayVision models page and PhysioNet MIMIC-CXR embeddings page for implementation details.
+- Added **Section 8. Transfer Learning Model Selection** to `PROJECT_PLAN.md`.
+
+**Changes made:**
+- **PROJECT_PLAN.md:** New section 8 with:
+  - **Recommended:** TorchXRayVision DenseNet121 MIMIC-CXR weights (`densenet121-res224-mimic_nb`, `mimic_ch`): 224×224, PyTorch, `model.features()` for fusion, pathology list aligned with project.
+  - **Alternatives:** TorchXRayVision ResNet50 (res512-all), CXR Foundation/PhysioNet embeddings, MoCo-CXR, CheXpert DenseNet, foundation models (CheXagent).
+  - **Decision:** Use TorchXRayVision DenseNet121 MIMIC-CXR as primary CNN backbone; fallback to ResNet if needed.
+- **.cursorrules:** This session log entry added.
+
+### 2025-01-30 — RNN/text branch model from Hugging Face Hub
+
+**User request:** For the RNN part, which model can we go with; search HF Hub.
+
+**Execution:**
+- Web search for HF Hub clinical/radiology BERT, BioBERT, MIMIC models; fetched RadBERT and Bio_ClinicalBERT HF pages.
+- Added **Section 9. Text Branch (RNN / Encoder) — Hugging Face Hub** to `PROJECT_PLAN.md`.
+
+**Changes made:**
+- **PROJECT_PLAN.md:** New section 9 with:
+  - **Recommended:** RadBERT-RoBERTa-4m (`UCSD-VA-health/RadBERT-RoBERTa-4m`) — 4M radiology reports, RoBERTa, use `AutoModel` + `pooler_output` or `last_hidden_state` for fusion; max_length=512.
+  - **Alternative:** Bio_ClinicalBERT (`emilyalsentzer/Bio_ClinicalBERT`) — MIMIC-III clinical notes, BERT-base 768-d; same usage pattern.
+  - **Other options:** BlueBERT (PubMed+MIMIC), bioclinical-bert-ft-m3-lc, gilbert.
+  - **Decision:** Use RadBERT as primary text encoder; Bio_ClinicalBERT if MIMIC alignment preferred; note that transformer encoders replace LSTM/GRU in practice on HF Hub.
+- **.cursorrules:** This session log entry added.
+
+### 2025-01-30 — Created project boilerplate structure
+
+**User request:** Create the base for all files and folders with boilerplate.
+
+**Execution:**
+- Created complete project structure with modular code following PROJECT_PLAN.md.
+- All modules documented with references to relevant PROJECT_PLAN sections.
+
+**Changes made:**
+- **config/** — Configuration module with `Config` dataclass (data, model, training, XAI settings)
+- **data/** — Placeholder for MIMIC-CXR dataset with .gitkeep
+- **src/data/** — Dataset, preprocessing (image 224×224, text tokenization), dataloader
+- **src/models/** — ImageEncoder (TorchXRayVision), TextEncoder (RadBERT/BERT), Fusion (concat/attention/cross-modal), MultimodalClassifier
+- **src/xai/** — GradCAM, TextAttributor (SHAP, Integrated Gradients), UnifiedExplainer with faithfulness evaluation
+- **src/training/** — Trainer class, train_epoch, evaluate, compute_metrics (AUROC, F1, etc.)
+- **src/utils/** — Helpers (set_seed, device, save/load model, EarlyStopping)
+- **scripts/** — train.py and inference.py entry points
+- **app/** — Streamlit web UI (streamlit_app.py)
+- **notebooks/** — Placeholder with .gitkeep
+- **tests/** — Test stubs (test_models.py)
+- **requirements.txt** — All dependencies with versions
+- **README.md** — Updated with project overview, structure, installation, usage
+- **.gitignore** — Added project-specific ignores (data, checkpoints, outputs)
+
+### 2025-01-30 — XAI for RNN/text branch (BERT encoder)
+
+**User request:** How will the use of XAI in RNN be; will it work for BERT encoder model?
+
+**Execution:**
+- Web search for SHAP/LIME and BERT text attribution, and for Integrated Gradients / attention in medical BERT explainability.
+- Added **Section 10. XAI for the Text Branch (BERT Encoder)** to `PROJECT_PLAN.md`.
+
+**Changes made:**
+- **PROJECT_PLAN.md:** New section 10 clarifying that XAI **does work** for the BERT encoder (RadBERT/Bio_ClinicalBERT). Content includes:
+  - How XAI applies to BERT (token-level attribution for classification/fusion output).
+  - Recommended methods: **SHAP** (incl. TransSHAP), **LIME**, **Integrated Gradients**, **attention** (supplementary); table of pros/cons.
+  - Practical choice: SHAP or IG as primary text XAI; combine with Grad-CAM for unified explanation; faithfulness >92%.
+  - Implementation notes: differentiability, scope (full pipeline), libraries (shap, captum, transformers).
+- **.cursorrules:** This session log entry added.

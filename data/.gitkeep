@@ -1,0 +1,11 @@
+# Placeholder for MIMIC-CXR dataset
+# Download from PhysioNet: https://physionet.org/content/mimic-cxr/2.0.0/
+# Requires credentialed access
+
+# Expected structure:
+# data/
+# └── mimic-cxr/
+#     ├── files/           # DICOM or JPG images
+#     ├── mimic-cxr-reports.csv
+#     ├── mimic-cxr-2.0.0-chexpert.csv
+#     └── mimic-cxr-2.0.0-split.csv

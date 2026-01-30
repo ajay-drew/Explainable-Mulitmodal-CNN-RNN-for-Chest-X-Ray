@@ -205,3 +205,14 @@ cython_debug/
 marimo/_static/
 marimo/_lsp/
 __marimo__/
+
+# Project-specific
+data/mimic-cxr/
+checkpoints/
+outputs/
+logs/
+*.pt
+*.pth
+*.ckpt
+wandb/
+mlruns/

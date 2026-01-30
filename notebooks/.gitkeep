@@ -1,0 +1,7 @@
+# Jupyter notebooks for exploration and experimentation
+#
+# Suggested notebooks:
+# - 01_data_exploration.ipynb - Explore MIMIC-CXR dataset
+# - 02_model_testing.ipynb - Test model components
+# - 03_xai_visualization.ipynb - Visualize explanations
+# - 04_evaluation.ipynb - Detailed evaluation and analysis
