@@ -1,0 +1,21 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual Environment
+.venv/
+venv/
+env/
+
+# IDE
+.vscode/
+.idea/
+
+# Application
+tmp/
+logs/*.log
+
+# Model (if downloaded locally in project, though we use cache)
+models/*.pth
+models/*.safetensors
