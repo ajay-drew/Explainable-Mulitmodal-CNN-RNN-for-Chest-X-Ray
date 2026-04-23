@@ -1,0 +1,36 @@
+mode: cnn
+dataset: mimic
+
+# Paths
+data_dir: data/mimic
+results_dir: results
+checkpoint_dir: checkpoints
+mimic_chexpert_csv: data/mimic/mimic-cxr-2.0.0-chexpert.csv
+mimic_split_csv: data/mimic/mimic-cxr-2.0.0-split.csv
+mimic_metadata_csv: data/mimic/mimic-cxr-2.0.0-metadata.csv
+mimic_images_dir: data/mimic/files
+
+# Models
+image_model: densenet121-res224-all
+radbert_model: StanfordAIMI/RadBERT
+
+# Data
+image_size: 224
+num_workers: 4
+batch_size: 32
+val_split: 0.1
+seed: 42
+
+# Labels
+num_classes: 15
+
+# XAI
+gradcam_method: gradcam
+n_ig_steps: 50
+n_shap_samples: 100
+disease_threshold: 0.5
+
+# Device
+device: cpu
+
+log_level: INFO

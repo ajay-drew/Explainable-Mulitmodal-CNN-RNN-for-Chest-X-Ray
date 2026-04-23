@@ -1,0 +1,26 @@
+mode: rnn
+dataset: sentiment140
+
+# Paths
+data_dir: data/sentiment140
+results_dir: results
+checkpoint_dir: checkpoints
+sentiment_csv: data/sentiment140/training.1600000.processed.noemoticon.csv
+
+# Models
+sentiment_model: cardiffnlp/twitter-roberta-base-sentiment
+
+# Data
+num_workers: 4
+batch_size: 32
+seed: 42
+
+# XAI
+n_ig_steps: 50
+n_shap_samples: 50
+disease_threshold: 0.5
+
+# Device
+device: cpu
+
+log_level: INFO
